@@ -1,3 +1,4 @@
+
 #include<bits/stdc++.h>
 using namespace std;
 
@@ -10,8 +11,8 @@ int total=0;
 
 
 
-
-struct Guest
+//structure to store individual data
+struct Occupant
 {
     string name;
     string startDate;
@@ -23,13 +24,13 @@ struct Guest
 };
 
 struct CompareDate {
-    bool operator()(Guest const& p1, Guest const& p2)
+    bool operator()(Occupant const& p1, Occupant const& p2)
     {
         return p1.endDate < p2.endDate;
     }
 };
 
-   priority_queue<Guest, vector<Guest>, CompareDate> check;
+   priority_queue<Occupant, vector<Occupant>, CompareDate> check;
 
 
 
@@ -37,7 +38,7 @@ struct CompareDate {
 
 struct node
 {
-    struct Guest info;
+    struct Occupant info;
     struct node *left;
     struct node *right;
 }*root;
@@ -54,9 +55,7 @@ class BST
         void case_a(node *,node *);
         void case_b(node *,node *);
         void case_c(node *,node *);
-        void preorder(node *);
-        void inorder(node *);
-        void postorder(node *);
+
         void display(node *, string);
         BST()
         {
@@ -79,7 +78,7 @@ void BST::insert(node *tree, node *newnode)
         root->info = newnode->info;
         root->left = NULL;
         root->right = NULL;
-        cout<<"Guest is added"<<endl;
+        cout<<"Occupant is added"<<endl;
         return;
     }
     if (tree->info.name == newnode->info.name)
@@ -182,7 +181,7 @@ void BST::del(string item)
     find(item, &parent, &location);
     if (location == NULL)
     {
-        cout<<"Guest Not Found"<<endl;
+        cout<<"Occupant Not Found"<<endl;
         return;
     }
     if (location->left == NULL && location->right == NULL)
@@ -273,12 +272,12 @@ void BST::case_c(node *par, node *loc)
 }
 
 
-  BST guests;
+  BST occupants;
 
 
 void checkIn()
 {
-    Guest newGuest;
+    Occupant newOccupant;
     string name;
      string startDate;
     string endDate;
@@ -287,14 +286,16 @@ void checkIn()
     int RoomNo;
 
 
-    cout<<"Please enter the following data with regards to the guest details"<<endl;
-    cout<<"Enter Guest name"<<endl;
+    cout<<"Please enter the following data with regards to the occupant details"<<endl;
+    cout<<"Enter Occupants name"<<endl;
     cin>>name;
-    cout<<"Enter guest check-out date in yyyy-mm-dd format"<<endl;
+    //getline(cin,name);
+    cout<<"Enter occupants check-out date in yyyy-mm-dd format"<<endl;
     cin>>endDate;
-    cout<<"Enter Guest Address"<<endl;
+    cout<<"Enter Occupant Address"<<endl;
     cin>>address;
-    cout<<"Enter guest age"<<endl;
+    //getline(cin,address);
+    cout<<"Enter occupant age"<<endl;
     cin>>age;
     cout<<"Please choose a room from the following list of unoccupied rooms"<<endl;
 
@@ -310,45 +311,45 @@ void checkIn()
         cout<<endl;
        cin>>RoomNo;
 
-    newGuest.name=name;
-    newGuest.startDate=dateToday;
-    newGuest.endDate=endDate;
-    newGuest.address=address;
-    newGuest.age=age;
-    newGuest.RoomNo=RoomNo;
+    newOccupant.name=name;
+    newOccupant.startDate=dateToday;
+    newOccupant.endDate=endDate;
+    newOccupant.address=address;
+    newOccupant.age=age;
+    newOccupant.RoomNo=RoomNo;
 
     roomsOccupied[RoomNo]=true;
 
-    check.push(newGuest);
+    check.push(newOccupant);
 
     node *add=new node;
 
-    add->info=newGuest;
+    add->info=newOccupant;
 
-    guests.insert(root,add);
+    occupants.insert(root,add);
 
-    cout<<"The guest "<<name<<" was succesfully checked in"<<endl<<endl;
+    cout<<"The occupant "<<name<<" was succesfully checked in"<<endl<<endl;
 
     total++;
 
 }
 
 
-void checkOutGuest(string name){
+void checkOutOccupant(string name){
 
 
-    node *parent, *guest;
+    node *parent, *occupant;
 
-    guests.find(name, &parent, &guest);
+    occupants.find(name, &parent, &occupant);
 
-    if(guest== NULL){
+    if(occupant== NULL){
         cout<<"not found";
         return;
     }
 
-    roomsOccupied[guest->info.RoomNo]=false;
+    roomsOccupied[occupant->info.RoomNo]=false;
     total--;
-    guests.del(name);
+    occupants.del(name);
 
 
 
@@ -361,32 +362,32 @@ void checkOutGuest(string name){
     }
 
 
-void displayInfo(Guest foundGuest){
+void displayInfo(Occupant foundOccupant){
 
-        cout<<"Name:"<<foundGuest.name<<endl;
-        cout<<"address:"<<foundGuest.startDate<<endl;
-        cout<<"Check-in Date:"<<foundGuest.startDate<<endl;
-        cout<<"Check-out Date:"<<foundGuest.endDate<<endl;
-        cout<<"roomNo.:"<<foundGuest.RoomNo<<endl<<endl;
+        cout<<"Name:"<<foundOccupant.name<<endl;
+        cout<<"address:"<<foundOccupant.startDate<<endl;
+        cout<<"Check-in Date:"<<foundOccupant.startDate<<endl;
+        cout<<"Check-out Date:"<<foundOccupant.endDate<<endl;
+        cout<<"roomNo.:"<<foundOccupant.RoomNo<<endl<<endl;
 
 }
 
 
-    void searchGuest(string name)
+    void searchOccupant(string name)
 {
-    node *parent, *guest;
+    node *parent, *occupant;
 
-    guests.find(name, &parent, &guest);
-    if (guest == NULL)
+    occupants.find(name, &parent, &occupant);
+    if (occupant == NULL)
     {
-        cout<<"Guest not found"<<endl;
+        cout<<"Occupant not found"<<endl;
         return;
     }
 
     else{
 
-        struct Guest foundGuest=guest->info;
-        displayInfo(foundGuest);
+        struct Occupant foundOccupant=occupant->info;
+        displayInfo(foundOccupant);
     }
 
 
@@ -400,8 +401,9 @@ void checkNearestAvailable(){
     if(check.empty()){
         cout<<"No room occupied currently"<<endl;
     }
-     Guest a[5];
+     Occupant a[5];
     int i=0;
+    cout<<"Rooms That will be available"<<endl;
     while(!check.empty()&&i<5){
         a[i++]=check.top();
         check.pop();
@@ -455,8 +457,8 @@ void start()
 
 
 
-    cout<<"1. Check in a New Guest"<<endl;
-    cout<<"2. Search for a guest"<<endl;
+    cout<<"1. Check in a New Occupant"<<endl;
+    cout<<"2. Search for an Occupant"<<endl;
     cout<<"3. Display vacant and Occupied rooms"<<endl;
     cout<<"4. Check rooms which will be available shortly"<<endl;
     cout<<"5. Exit the portal"<<endl;
@@ -480,7 +482,8 @@ void start()
         cout<<"Enter the name Of the Person You Want to search"<<endl<<endl;
         string a;
         cin>>a;
-         searchGuest(a);
+        getline(cin,a);
+         searchOccupant(a);
     break;}
 
    case 3:{
@@ -516,6 +519,23 @@ void start()
     }
 
 
+
+    void checkOut(){
+
+    //check until endDate is equal to todays date and keeps in checking out
+     while(!check.empty()&&check.top().endDate==dateToday){
+
+        checkOutOccupant(check.top().name);
+
+    }
+
+
+
+    }
+
+
+
+
 int main()
 {
     cout<<"****NIT SILCHAR QUARRENTINE CENTER****"<<endl;
@@ -528,13 +548,8 @@ int main()
     cin>>dateToday;
 
 
-    //check until endDate is equal to todays date and keeps in checking out guest
-     while(!check.empty()&&check.top().endDate==dateToday){
 
-        checkOutGuest(check.top().name);
-
-    }
-
+    checkOut();
 
     start();
 
